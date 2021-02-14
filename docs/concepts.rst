@@ -583,6 +583,13 @@ Some other tips when using SubDAGs:
    effectively limit its parallelism to one. Using LocalExecutor can be
    problematic as it may over-subscribe your worker, running multiple tasks in
    a single slot
+-  do not create more SUBDags then your concurrency limit or the scheduler
+   will deadlock. Each SUBDag counts towards your concurrency limit. For
+   example, if you have a concurrency limit of 16 and you have 25 SubDAGs,
+   the 16 SUBDags will be scheduled, effectively blocking any of the tasks
+   within the given SUBDags. You can work around this by setting the SubDAG's
+   executor to SequentialExecutor. This allows multiple SubDAGs to run
+   concurrently without locking the tasks within the SubDAG
 
 See ``airflow/example_dags`` for a demonstration.
 
